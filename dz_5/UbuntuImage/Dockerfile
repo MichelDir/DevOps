@@ -13,4 +13,3 @@ RUN mvn clean package --file /root/tcathw/
 RUN cp /root/tcathw/target/java-tomcat-maven-example.war /opt/apache-tomcat-9.0.53/webapps/
 EXPOSE 8080
 CMD ["/opt/apache-tomcat-9.0.53/bin/catalina.sh", "run"]
-#CMD ["/bin/bash"]
