@@ -6,6 +6,4 @@ RUN git clone https://github.com/daticahealth/java-tomcat-maven-example.git /roo
 RUN mvn clean package --file /root/tcathw/
 RUN cp /root/tcathw/target/java-tomcat-maven-example.war /usr/local/tomcat/webapps/
 EXPOSE 8080
-#CMD ["/bin/bash"]
-#CMD ["sleep","infinity"]
 CMD ["catalina.sh", "run"]
