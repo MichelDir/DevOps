@@ -7,9 +7,8 @@ services:
       - ./src:/tmp/src
     working_dir: /tmp/src
     command: mvn package
-#    command: cp /tmp/src/target/*.war /src
   webs:
-    image: tomcat
+    image: tomcat:8.5-alpine
     ports:
       - "8080:8080"
     volumes:
