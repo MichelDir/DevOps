@@ -1,0 +1,20 @@
+---
+version: '2'
+services:
+  maven:
+    image: maven:3.3-jdk-8
+    volumes:
+      - ./src:/tmp/src
+    working_dir: /tmp/src
+    command: mvn package
+#    command: cp /tmp/src/target/*.war /src
+  webs:
+    image: tomcat
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./src/target:/usr/local/tomcat/webapps
+    volumes_from:
+      - maven
+    depends_on:
+      - maven
