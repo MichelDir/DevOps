@@ -35,7 +35,6 @@
   - name: Enssure Project is WAR file is present
     shell: "/tmp/checkout/target/git_add.sh"
 
-
   - name: Enssure 
     file: 
       path: /tmp/checkout/target/git_add.sh
@@ -50,3 +49,6 @@
     apt:
       name: tomcat9
       state: present
+
+  - name: Enssure Project is WAR file is present
+    shell: "wget https://github.com/MichelDir/prod/blob/master/java-tomcat-maven-example.war -P /var/lib/tomcat9/webapps"
