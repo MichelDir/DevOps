@@ -1,0 +1,26 @@
+---
+# tasks file for maven
+  - name: Ensure JDK  package is present
+    apt:
+      name: default-jdk
+      state: present
+
+  - name: Enssure Maven  package is present
+    apt:
+      name: maven
+      state: present
+
+  - name: Ensure Project
+    git:
+      repo: https://github.com/daticahealth/java-tomcat-maven-example.git
+      dest: /tmp/checkout
+
+  - name: Enssure Project is WAR file is present
+    shell: "mvn package -f /tmp/checkout"
+
+  - name: Synchronization of src on the control machine to dest on the remote hosts
+    synchronize:
+      mode: pull
+      src: /tmp/checkout/target/java-tomcat-maven-example.war
+      dest: /tmp/java-tomcat-maven-example.war
+

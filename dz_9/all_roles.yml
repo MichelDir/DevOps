@@ -1,0 +1,17 @@
+---
+- name: maven-server config
+  hosts: maven
+  become: yes
+
+
+  roles:
+   - common
+   - maven
+
+- name: tomcat config
+  hosts: tomcat
+  become: yes
+
+  roles:
+   - common
+   - tomcat

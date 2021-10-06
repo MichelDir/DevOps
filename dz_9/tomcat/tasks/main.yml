@@ -1,0 +1,23 @@
+---
+# tasks file for tomcat
+  - name: Ensure JDK package is present
+    apt:
+      name: default-jdk
+      state: present
+
+  - name: Ensure Tomcat  package is present
+    apt:
+      name: tomcat9
+      state: present
+
+  - name: Start service Tomcat, if not started
+    service:
+      name: tomcat9
+      state: started
+
+
+  - name: Synchronization of src on the control machine to dest on the remote hosts
+    synchronize:
+      src: /tmp/java-tomcat-maven-example.war
+      dest: /var/lib/tomcat9/webapps/java-tomcat-maven-example.war
+
