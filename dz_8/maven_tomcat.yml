@@ -1,0 +1,54 @@
+---
+- name: install maven
+  hosts: maven
+  become: yes
+
+  tasks:
+  - name: Ensure JDK  package is present
+    apt:
+      name: default-jdk
+      state: present
+
+  - name: Enssure Maven  package is present
+    apt:
+      name: maven
+      state: present
+
+  - name: Ensure Project
+    git:
+      repo: https://github.com/daticahealth/java-tomcat-maven-example.git
+      dest: /tmp/checkout
+
+  - name: Enssure Project is WAR file is present
+    shell: "mvn package -f /tmp/checkout"
+
+  - name: Ensure git_add.sh is present
+    copy:
+      src: git_add.sh
+      dest: /tmp/checkout/target
+
+  - name: Ensure git_add.sh is executable
+    file:
+       path: /tmp/checkout/target/git_add.sh
+       mode: '0777'
+
+  - name: Enssure Project is WAR file is present
+    shell: "/tmp/checkout/target/git_add.sh"
+
+  - name: Enssure 
+    file: 
+      path: /tmp/checkout/target/git_add.sh
+      state: absent
+
+- name: install tomcat
+  hosts: tomcat
+  become: yes
+
+  tasks:
+  - name: Ensure Tomcat  package is present
+    apt:
+      name: tomcat9
+      state: present
+
+  - name: Enssure Project is WAR file is present
+    shell: "wget https://github.com/MichelDir/prod/blob/master/java-tomcat-maven-example.war -P /var/lib/tomcat9/webapps"
