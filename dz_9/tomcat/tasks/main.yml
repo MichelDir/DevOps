@@ -20,4 +20,3 @@
     synchronize:
       src: /tmp/java-tomcat-maven-example.war
       dest: /var/lib/tomcat9/webapps/java-tomcat-maven-example.war
-
