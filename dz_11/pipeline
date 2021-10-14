@@ -1,0 +1,33 @@
+pipeline {
+    agent {
+        label 'server2'
+    }
+    stages {
+        stage('Clone Git project') {
+            agent any
+            steps {
+                sh 'rm -rf /tmp/src'
+                sh 'git clone https://github.com/daticahealth/java-tomcat-maven-example.git /tmp/src'
+            }
+        }
+        stage('Build WAR') {
+            agent {
+                docker {
+                    image 'maven:3.3-jdk-8'
+                    args '-v /tmp/src:/tmp/src --rm'
+                    reuseNode true 
+                }
+            }
+            steps {
+                sh 'mvn clean package --file /tmp/src'
+            }
+        }
+        stage('Create, tag,push Mywebapp container') {
+            steps {
+                sh 'docker build -t mywebapp /tmp'
+                sh "docker tag mywebapp 10.182.0.17:8123/mywebapp:${version}"
+                sh "docker push 10.182.0.17:8123/mywebapp:${version}"
+            }
+        }
+    }
+}
