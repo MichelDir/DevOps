@@ -1,0 +1,36 @@
+version: '2'
+
+services:
+
+  mysql-development:
+    image: mysql:5
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: test
+    ports:
+      - "3306:3306"
+  
+  admin:    
+    image: adminer    
+    ports:      
+      - "8081:8080"
+  
+  maven:
+    image: maven:3.3-jdk-8
+    volumes:
+      - ./src:/tmp/src
+    working_dir: /tmp/src
+    command: mvn package
+
+  tomcat:
+    image: tomcat:8.5-alpine
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./src/target:/usr/local/tomcat/webapps
+      - ./Config.properties:/usr/local/tomcat/ROOT/Config.properties
+    volumes_from:
+      - maven
+    depends_on:
+      - maven
+      - mysql-development
