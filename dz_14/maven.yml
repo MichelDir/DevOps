@@ -1,0 +1,31 @@
+---
+- name: install maven
+  hosts: maven
+  become: yes
+
+  tasks:
+  - name: Only run "update_cache=yes" if the last one is more than 3600 seconds ago
+    apt:
+      update_cache: yes
+      cache_valid_time: 3600
+
+  - name: Ensure JDK  package is present
+    apt:
+      name: default-jdk
+      state: present
+
+  - name: Enssure Maven  package is present
+    apt:
+      name: maven
+      state: present
+
+  - name: Ensure Project
+    git:
+      repo: https://github.com/daticahealth/java-tomcat-maven-example.git
+      dest: /tmp/checkout
+
+  - name: Enssure Project is WAR file is present
+    shell: "mvn package -f /tmp/checkout"
+
+  - name: Enssure Project is WAR file is in the bucket
+    shell: "gsutil cp /tmp/checkout/target/java-tomcat-maven-example.war gs://micheldirmaven"
