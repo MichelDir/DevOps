@@ -37,4 +37,14 @@ resource "google_compute_instance" "vm_instance_maven" {
 }
 
 
+resource "null_resource" "ansible_maven" {
+ provisioner "remote-exec" {
+    connection {
+      host = "terraform-maven"
+      user = "ubuntu"
+      private_key = file("./key.pvk")
+    }
 
+    inline = ["echo 'connected!'"]
+ }
+}
