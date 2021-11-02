@@ -27,5 +27,3 @@
   - name: Enssure Project is WAR file is present
     shell: "mvn package -f /tmp/checkout"
 
-  - name: Enssure Project is WAR file is in the bucket
-    shell: "gsutil cp /tmp/checkout/target/java-tomcat-maven-example.war gs://micheldirmaven"
