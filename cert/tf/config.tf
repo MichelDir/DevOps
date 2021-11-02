@@ -42,7 +42,7 @@ resource "null_resource" "ansible_maven" {
     connection {
       host = "terraform-maven"
       user = "ubuntu"
-      private_key = file("/root/key.pvk")
+      private_key = file("./key.pvk")
     }
 
     inline = ["echo 'connected!'"]
