@@ -26,16 +26,19 @@
       src: ./dockerfile
       dest: /tmp/dockerfile
 
-  - name: Log into DockerHub
-    docker_login:
-      username: micheldir
-      password: "{{ pass }}"
-
   - name: build container image
     docker_image:
-      name: micheldir/cert
+      name: dirtcat:v1.0
       build:
         path: /tmp
       source: build
       state: present
-      push: yes
+
+  - name: tag container image
+    docker_image:
+      name: dirtcat:v1.0
+      repository: micheldir/cert
+      build:
+        path: /tmp
+      source: build
+      state: present
