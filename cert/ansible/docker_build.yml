@@ -1,0 +1,31 @@
+---
+- name: build and push docker
+  hosts: maven
+  become: yes
+
+  tasks:
+  - name: Only run "update_cache=yes" if the last one is more than 3600 seconds ago
+    apt:
+      update_cache: yes
+      cache_valid_time: 3600
+
+  - name: Ensure Docker  package is present
+    apt:
+      name: docker.io
+      state: present
+
+  - name: copy Dockerfile
+    copy:
+      src: ./Dockerfile
+      dest: /tmp/Dockerfile
+      owner: root
+      group: root
+      mode: '0644'
+
+  - name: build container image
+    docker_image:
+      name: dirtcat:v1.0
+      build:
+        path: /root/Dockerfile
+        source: build
+      state: present
