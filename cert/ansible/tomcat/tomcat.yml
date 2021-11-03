@@ -8,10 +8,27 @@
       update_cache: yes
       cache_valid_time: 3600
 
-  - name: Ensure Tomcat  package is present
+  - name: Ensure Docker  package is present
     apt:
-      name: tomcat9
+      name: docker.io
       state: present
 
-  - name: Enssure Project is WAR file is present
-    shell: "gsutil cp gs://micheldirmaven/java-tomcat-maven-example.war /var/lib/tomcat9/webapps/java-tomcat-maven-example.war"
+  - name: Ensure Docker-compose  package is present
+    apt:
+      name: docker-compose
+      state: present
+  
+  - name: Start Docker service
+    service:
+      name: docker
+      state: started
+      enabled: yes
+    become: yes
+
+  - name: Start Docker service
+    docker_container:
+      name: dirtomcat
+      image: micheldir/cert
+      ports:
+        - "8080:8080"
+

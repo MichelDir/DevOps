@@ -1,0 +1,8 @@
+- name: Test WEB APP
+  hosts: tomcat
+  become: yes
+
+  tasks:
+  - name: Check that WEB App is available (GET) and it returns a status 200
+    uri:
+      url: http://terraform-tomcat:8080/java-tomcat-maven-example/
