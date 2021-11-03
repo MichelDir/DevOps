@@ -1,0 +1,79 @@
+pipeline {
+    agent {
+        label 'master'
+    }
+    stages {
+        stage('1 Init: Get Scripts from GIT') {
+            steps {
+                sh "rm -rf ./src"
+                sh "git clone https://github.com/MichelDir/DevOps.git ./src"
+                withCredentials([file(credentialsId: 'PVK', variable: 'FILE')]) {
+                    sh 'cp $FILE ./src/cert/tf/maven/key.pvk'
+                    sh 'cp $FILE ./src/cert/tf/tomcat/key.pvk'
+                     }
+                     
+              
+            }
+        }
+        stage('2 Builder VM:Create - Init & plan  Terraform') {
+            steps {
+                
+                sh "terraform -chdir=./src/cert/tf/maven/ init"
+                sh "terraform -chdir=./src/cert/tf/maven/ plan"
+              
+            }
+        }
+        stage('3 Builder VM:Create - Apply Terraform') {
+            steps {
+                sh "terraform -chdir=./src/cert/tf/maven/ apply -auto-approve"
+              
+            }
+        }
+        stage('4 Builder VM: Setup env & build app') {
+            steps {
+                ansiblePlaybook become: true, colorized: true, credentialsId: '3dada212-4103-46e3-a939-0c821974275d', disableHostKeyChecking: true, inventory: './src/cert/ansible/maven/hosts_maven', playbook: './src/cert/ansible/maven/maven.yml'
+              
+            }
+        }
+        stage('5 Builder VM: Build & push docker') {
+            steps {
+                withCredentials([string(credentialsId: 'DOCKER', variable: 'PASS')]) {
+                 ansiblePlaybook extras: ' --extra-vars "pass=$PASS"', become: true, colorized: true, credentialsId: '3dada212-4103-46e3-a939-0c821974275d', disableHostKeyChecking: true, inventory: './src/cert/ansible/maven/hosts_maven', playbook: './src/cert/ansible/maven/docker_build.yml'
+                }
+              
+            }
+        }
+        stage('6 Builder VM:Destroy') {
+            steps {
+                sh "terraform -chdir=./src/cert/tf/maven/ destroy -auto-approve"
+              
+            }
+        }
+        stage('7 Tomcat VM:Create - Init & plan  Terraform') {
+            steps {
+                
+                sh "terraform -chdir=./src/cert/tf/tomcat/ init"
+                sh "terraform -chdir=./src/cert/tf/tomcat/ plan"
+              
+            }
+        }
+        stage('8 Tomcat VM:Create - Apply Terraform') {
+            steps {
+                sh "terraform -chdir=./src/cert/tf/tomcat/ apply -auto-approve"
+              
+            }
+        }
+       stage('9 Tomcat VM: Setup Docker env & RUN app') {
+            steps {
+                ansiblePlaybook become: true, colorized: true, credentialsId: '3dada212-4103-46e3-a939-0c821974275d', disableHostKeyChecking: true, inventory: './src/cert/ansible/tomcat/hosts_tomcat', playbook: './src/cert/ansible/tomcat/tomcat.yml'
+              
+            }
+        } 
+        stage('10 WEB App: Check that WEB App is available') {
+            steps {
+                ansiblePlaybook become: true, colorized: true, credentialsId: '3dada212-4103-46e3-a939-0c821974275d', disableHostKeyChecking: true, inventory: './src/cert/ansible/tomcat/hosts_tomcat', playbook: './src/cert/ansible/tomcat/tomcat_test.yml'
+              
+            }
+        } 
+    }
+} 
