@@ -8,6 +8,9 @@
    maven/maven.yml        - настройка окружения, сборка WEB приложения
    maven/docker_build.yml - настройка Docker окружения, сборка Docker image, push to registry (micheldir/cert)
    maven/dockerfile       - сборка Docker образа
+   tomcat/hosts_tomcat    - ansible hosts file
+   tomcat/tomcat.yml      - настройка Docker и старт контейнера
+   tomcat/tomcat_test.yml - тестирование работоспособности 
  cert/jenkins/ - jenkins pipeline 
    pipeline.txt - Jenkins pipeline
 
